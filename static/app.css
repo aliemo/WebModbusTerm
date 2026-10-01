@@ -135,7 +135,7 @@ body {
 }
 
 .badge.off {
-  background: #2a2f2c;
+  background: #1c2430;
   color: var(--muted);
 }
 
@@ -217,7 +217,7 @@ input, select, button, textarea {
 
 input, select {
   width: 100%;
-  background: #121612;
+  background: #0f1620;
   color: var(--ink);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -229,7 +229,7 @@ button {
   border-radius: 8px;
   padding: 0.55rem 0.9rem;
   background: var(--accent);
-  color: #07140d;
+  color: #041018;
   font-weight: 650;
   cursor: pointer;
 }
@@ -283,7 +283,7 @@ button.ghost {
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
-  background: #0c100d;
+  background: #0b1018;
 }
 
 .log-head,
@@ -301,7 +301,7 @@ button.ghost {
   letter-spacing: 0.06em;
   color: var(--muted);
   border-bottom: 1px solid var(--line);
-  background: #101612;
+  background: #121a26;
   font-weight: 650;
 }
 
@@ -452,7 +452,7 @@ button.ghost {
   align-items: center;
   gap: 0.45rem;
   padding: 0.45rem 0.65rem;
-  background: #121612;
+  background: #0f1620;
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
@@ -483,7 +483,7 @@ button.ghost {
 .file-name.has-file {
   color: var(--rx);
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-  background: color-mix(in srgb, var(--accent) 10%, #121612);
+  background: color-mix(in srgb, var(--accent) 10%, #0f1620);
 }
 
 .file-name.has-file::before {
@@ -499,13 +499,13 @@ button.ghost {
   font-weight: 700;
   letter-spacing: 0.05em;
   line-height: 1;
-  background: #1e2a22;
+  background: #1a2838;
   color: var(--ink);
   border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
 }
 
 .file-browse:hover {
-  background: color-mix(in srgb, var(--accent) 28%, #1e2a22);
+  background: color-mix(in srgb, var(--accent) 28%, #1a2838);
   border-color: var(--accent);
   color: #fff;
 }
@@ -525,7 +525,7 @@ button.ghost {
   gap: 0.35rem;
   flex: 0 0 auto;
   min-width: 5.5rem;
-  background: color-mix(in srgb, var(--accent) 85%, #0a1a10);
+  background: color-mix(in srgb, var(--accent) 85%, #062033);
   border: 1px solid var(--accent-dim);
 }
 
@@ -549,7 +549,7 @@ button.ghost {
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
   border: 1px solid color-mix(in srgb, var(--tx) 45%, var(--line));
-  background: color-mix(in srgb, var(--tx) 12%, #121612);
+  background: color-mix(in srgb, var(--tx) 12%, #0f1620);
   color: var(--tx);
   font-size: 0.82rem;
   font-weight: 650;
@@ -558,7 +558,7 @@ button.ghost {
 }
 
 .file-download:hover {
-  background: color-mix(in srgb, var(--tx) 22%, #121612);
+  background: color-mix(in srgb, var(--tx) 22%, #0f1620);
   border-color: var(--tx);
   color: #f5d89a;
 }
@@ -607,7 +607,7 @@ button.ghost {
 
 .cmd-grid button {
   text-align: left;
-  background: #1a221d;
+  background: #152032;
   color: var(--ink);
   border: 1px solid var(--line);
   font-weight: 600;
@@ -615,7 +615,7 @@ button.ghost {
 
 .cmd-grid button:hover {
   border-color: var(--accent-dim);
-  background: color-mix(in srgb, var(--accent) 14%, #1a221d);
+  background: color-mix(in srgb, var(--accent) 14%, #152032);
 }
 
 .cmd-grid button .cmd-desc {
@@ -632,7 +632,7 @@ button.ghost {
 
 .cmd-grid button.active {
   border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 22%, #1a221d);
+  background: color-mix(in srgb, var(--accent) 22%, #152032);
 }
 
 .cmd-manage {
