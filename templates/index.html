@@ -134,7 +134,14 @@
                 </select>
               </label>
             </div>
-            <label class="inline"><input type="checkbox" id="cmdConfirm" /> Confirm before send</label>
+            <label class="confirm-toggle" for="cmdConfirm" title="Ask for confirmation before sending this command">
+              <input type="checkbox" id="cmdConfirm" />
+              <span class="confirm-switch" aria-hidden="true"></span>
+              <span class="confirm-copy">
+                <span class="confirm-title">Confirm before send</span>
+                <span class="confirm-hint">Show a prompt each time this command is sent</span>
+              </span>
+            </label>
             <div class="import-box">
               <span class="import-label">Import YAML / CSV</span>
               <input id="cmdImportFile" class="file-hidden" type="file" accept=".yml,.yaml,.csv,text/csv,text/yaml" tabindex="-1" />
