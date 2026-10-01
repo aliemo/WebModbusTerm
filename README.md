@@ -4,7 +4,9 @@
 
 Open: `http://<host>:8088`
 
-![WebModbusTerm web UI demo](docs/webmodbusterm-demo.gif)
+![WebModbusTerm full web UI demo](docs/webmodbusterm-demo.gif)
+
+_Full-page UI tour: Raw serial → Modbus RTU → Modbus TCP._
 
 License: [MIT](LICENSE) - see [NOTICE](NOTICE) for fonts and logo attribution.
 
