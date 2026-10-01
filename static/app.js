@@ -87,7 +87,7 @@ function formatDetail(data) {
 
 function getLogBufferLimit() {
   const n = Number(els.logBuffer.value || 200);
-  return Number.isFinite(n) && n > 0 - n : 200;
+  return Number.isFinite(n) && n > 0 ? n : 200;
 }
 
 let pendingActionTitle = "TX";
@@ -125,14 +125,14 @@ function logMsg(cls, text) {
   appendConsoleRow({
     cls,
     ts: nowTs(),
-    action: cls === "err" - "Error" : "Info",
+    action: cls === "err" ? "Error" : "Info",
     hex: "-",
     ascii: text.replace(/^\[[^\]]+\]\s*/, ""),
   });
 }
 
 function setConnected(connected, detail = "") {
-  els.connBadge.textContent = connected - `Connected${detail - " Â· " + detail : ""}` : "Disconnected";
+  els.connBadge.textContent = connected ? `Connected${detail ? " · " + detail : ""}` : "Disconnected";
   els.connBadge.classList.toggle("on", connected);
   els.connBadge.classList.toggle("off", !connected);
   els.connectBtn.disabled = connected;
@@ -208,8 +208,8 @@ function enforceHexField(inputEl, encodingSelect) {
 }
 
 function syncHexPlaceholders() {
-  els.payload.placeholder = isHexEncoding(els.encoding) - "01 03 00 00 00 0A" : "Type textâ€¦";
-  els.cmdValue.placeholder = isHexEncoding(els.cmdEncoding) - "01 03 00 00 00 0A" : "Type textâ€¦";
+  els.payload.placeholder = isHexEncoding(els.encoding) ? "01 03 00 00 00 0A" : "Type text…";
+  els.cmdValue.placeholder = isHexEncoding(els.cmdEncoding) ? "01 03 00 00 00 0A" : "Type text…";
 }
 
 function parseHexLocal(text) {
@@ -232,7 +232,7 @@ function modbusCrc16Local(bytes) {
   for (const byte of bytes) {
     crc ^= byte;
     for (let i = 0; i < 8; i++) {
-      crc = crc & 1 - (crc >>> 1) ^ 0xa001 : crc >>> 1;
+      crc = crc & 1 ? (crc >>> 1) ^ 0xa001 : crc >>> 1;
     }
   }
   return crc & 0xffff;
@@ -262,7 +262,7 @@ function isCrcEnabled() {
 }
 
 function computeCrcTailLocal(bytes, mode) {
-  const m = getCrcMode() && mode - mode : getCrcMode();
+  const m = getCrcMode() && mode ? mode : getCrcMode();
   const use = mode || getCrcMode();
   if (use === "none") return [];
   if (use === "modbus") {
@@ -290,7 +290,7 @@ function formatCommandPreview(value, encoding, crcMode) {
     label = `hex: ${escapeHtml(bytesToHexLocal(body))}`;
   } else {
     body = Array.from(new TextEncoder().encode(value));
-    label = `${escapeHtml(enc)}: ${escapeHtml(value)} â†’ ${escapeHtml(bytesToHexLocal(body))}`;
+    label = `${escapeHtml(enc)}: ${escapeHtml(value)} → ${escapeHtml(bytesToHexLocal(body))}`;
   }
   if (mode === "none") return label;
   const tail = computeCrcTailLocal(body, mode);
@@ -307,8 +307,8 @@ function refreshCrcPreview() {
   if (!payload) {
     els.crcPreview.innerHTML =
       mode === "none"
-        - `${escapeHtml(encoding)}: <span class="hint-inline">type bytes</span>`
-        : `${escapeHtml(encoding)}: <span class="hint-inline">type bytes - ${escapeHtml(mode)} trailer appears here</span>`;
+        ? `${escapeHtml(encoding)}: <span class="hint-inline">type bytes</span>`
+        : `${escapeHtml(encoding)}: <span class="hint-inline">type bytes — ${escapeHtml(mode)} trailer appears here</span>`;
     return;
   }
 
@@ -357,7 +357,7 @@ async function refreshPorts() {
   for (const p of data.ports || []) {
     const opt = document.createElement("option");
     opt.value = p.device;
-    opt.textContent = `${p.device} - ${p.description || "serial"}`;
+    opt.textContent = `${p.device} — ${p.description || "serial"}`;
     els.port.appendChild(opt);
   }
   if ([...els.port.options].some((o) => o.value === current)) els.port.value = current;
@@ -373,11 +373,11 @@ async function refreshConfigs() {
   const res = await fetch("/api/configs");
   const data = await res.json();
   const current = els.configSelect.value;
-  els.configSelect.innerHTML = `<option value="">- select -</option>`;
+  els.configSelect.innerHTML = `<option value="">— select —</option>`;
   for (const c of data.configs || []) {
     const opt = document.createElement("option");
     opt.value = c.id;
-    opt.textContent = c.name + (c.description - ` - ${c.description}` : "");
+    opt.textContent = c.name + (c.description ? ` — ${c.description}` : "");
     els.configSelect.appendChild(opt);
   }
   if (current && [...els.configSelect.options].some((o) => o.value === current)) {
@@ -475,7 +475,7 @@ async function runPredefined() {
     logMsg("err", "[err] No predefined command selected");
     return;
   }
-  if (cmd.confirm && !window.confirm(`Send â€œ${cmd.title}â€-`)) return;
+  if (cmd.confirm && !window.confirm(`Send “${cmd.title}”?`)) return;
   setPendingAction(cmd.title || cmd.id || "CMD");
   const res = await fetch("/api/commands/run", {
     method: "POST",
@@ -551,7 +551,7 @@ async function deleteCommand() {
     logMsg("err", "[err] Select a command to delete");
     return;
   }
-  if (!window.confirm(`Delete â€œ${id}â€ from commands.yml-`)) return;
+  if (!window.confirm(`Delete “${id}” from commands.yml?`)) return;
   const res = await fetch(`/api/commands/${encodeURIComponent(id)}`, { method: "DELETE" });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -587,7 +587,7 @@ async function connect() {
     logMsg("err", `[err] ${formatDetail(data)}`);
     return;
   }
-  const detail = mode === "modbus_tcp" - `${data.host}:${data.tcp_port}` : `${data.port} @ ${data.baudrate}`;
+  const detail = mode === "modbus_tcp" ? `${data.host}:${data.tcp_port}` : `${data.port} @ ${data.baudrate}`;
   setConnected(true, detail);
 }
 
@@ -653,7 +653,7 @@ function appendConsoleRow({ cls, ts, action, hex, ascii, hexHtml }) {
   const hexText = hex || "-";
   const asciiText = ascii || "-";
   const hexCell = hexHtml
-    - hexHtml
+    ? hexHtml
     : `<span class="c-hex">${escapeHtml(hexText)}</span>`;
   appendLogHtml(
     cls || "sys",
@@ -734,7 +734,7 @@ function formatFrameLog(dir, ev) {
 
   let hexHtml;
   if (ev.crc_hex) {
-    const crcClass = ev.crc_ok === false - "crc-bad" : "crc-part";
+    const crcClass = ev.crc_ok === false ? "crc-bad" : "crc-part";
     hexHtml =
       `<span class="c-hex">${escapeHtml(ev.payload_hex || "")} ` +
       `<span class="${crcClass}">${escapeHtml(ev.crc_hex)}</span></span>`;
@@ -759,14 +759,14 @@ function handleEvent(ev) {
     formatFrameLog("tx", ev);
   } else if (ev.type === "modbus") {
     const action = ev.ok
-      - `Modbus ${ev.function}`
+      ? `Modbus ${ev.function}`
       : `Modbus ${ev.function} FAIL`;
     appendConsoleRow({
-      cls: ev.ok - "mb" : "err",
+      cls: ev.ok ? "mb" : "err",
       ts,
       action,
       hex: `addr=${ev.address} qty=${ev.quantity} unit=${ev.unit_id}`,
-      ascii: ev.ok - JSON.stringify(ev.values) : ev.error || "error",
+      ascii: ev.ok ? JSON.stringify(ev.values) : ev.error || "error",
     });
   } else if (ev.type === "command") {
     // TX row already carries the command title/hex/ascii
@@ -799,9 +799,9 @@ function handleEvent(ev) {
     if (typeof ev.connected === "boolean") {
       const detail =
         ev.mode === "modbus_tcp"
-          - `${ev.host}:${ev.tcp_port}`
+          ? `${ev.host}:${ev.tcp_port}`
           : ev.port
-            - `${ev.port} @ ${ev.baudrate}`
+            ? `${ev.port} @ ${ev.baudrate}`
             : "";
       setConnected(ev.connected, detail);
     }
@@ -817,7 +817,7 @@ function handleEvent(ev) {
 }
 
 function connectWs() {
-  const proto = location.protocol === "https:" - "wss" : "ws";
+  const proto = location.protocol === "https:" ? "wss" : "ws";
   const ws = new WebSocket(`${proto}://${location.host}/ws`);
   ws.onmessage = (msg) => {
     try {
@@ -827,7 +827,7 @@ function connectWs() {
     }
   };
   ws.onclose = () => {
-    logMsg("sys", "WebSocket closed - reconnectingâ€¦");
+    logMsg("sys", "WebSocket closed — reconnecting…");
     setTimeout(connectWs, 1500);
   };
   setInterval(() => {
@@ -928,7 +928,7 @@ fetch("/api/status")
   .then((s) => {
     if (s.connected) {
       const detail =
-        s.mode === "modbus_tcp" - `${s.host}:${s.tcp_port}` : `${s.port} @ ${s.baudrate}`;
+        s.mode === "modbus_tcp" ? `${s.host}:${s.tcp_port}` : `${s.port} @ ${s.baudrate}`;
       setConnected(true, detail);
     }
   })
