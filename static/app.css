@@ -70,8 +70,9 @@ body {
   font-family: var(--sans);
   color: var(--ink);
   background:
-    radial-gradient(ellipse at top left, #2a4034 0%, transparent 45%),
-    linear-gradient(160deg, #141916, var(--bg) 40%, #101412);
+    radial-gradient(ellipse at top left, #1a3a52 0%, transparent 42%),
+    radial-gradient(ellipse at bottom right, #1e2a1a 0%, transparent 40%),
+    linear-gradient(160deg, #0d1218, var(--bg) 42%, #0a0e14);
 }
 
 .top {
