@@ -1,15 +1,15 @@
 :root {
-  --bg: #1a1f1c;
-  --panel: #232a26;
-  --ink: #e7efe8;
-  --muted: #9aab9e;
-  --accent: #3d9b6a;
-  --accent-dim: #2c6f4c;
+  --bg: #121820;
+  --panel: #1a2330;
+  --ink: #e8eef6;
+  --muted: #9aabbc;
+  --accent: #008cc7;
+  --accent-dim: #066a96;
   --danger: #c45c4a;
-  --rx: #7ec8a0;
-  --tx: #e0b35a;
+  --rx: #2bb34a;
+  --tx: #f5911c;
   --err: #f0a090;
-  --line: #334038;
+  --line: #2a3648;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
   --sans: "IBM Plex Sans", system-ui, sans-serif;
 }
