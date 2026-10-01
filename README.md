@@ -4,6 +4,8 @@
 
 Open: `http://<host>:8088`
 
+![WebModbusTerm web UI demo](docs/webmodbusterm-demo.gif)
+
 License: [MIT](LICENSE) - see [NOTICE](NOTICE) for fonts and logo attribution.
 
 ## Features
