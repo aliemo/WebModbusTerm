@@ -6,13 +6,13 @@
   <title>WebModbusTerm</title>
   <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/static/img/headerLogo.svg" />
-  <link rel="stylesheet" href="/static/app.css?v=1.0.0" />
+  <link rel="stylesheet" href="/static/app.css?v=1.0.3" />
 </head>
 <body>
   <header class="top">
     <div class="brand">
       <a class="brand-link" href="/" title="WebModbusTerm">
-        <img class="brand-logo" src="/static/img/headerLogo.svg" alt="WebModbusTerm" width="48" height="48" />
+        <img class="brand-logo" src="/static/img/headerLogo.svg" alt="Modbus" width="48" height="48" />
       </a>
       <div class="brand-text">
         <h1>WebModbusTerm</h1>
@@ -38,10 +38,10 @@
         <label>Load YAML config
           <div class="row">
             <select id="configSelect">
-              <option value="">- select -</option>
+              <option value="">— select —</option>
             </select>
             <button type="button" id="loadConfigBtn">Load</button>
-            <button type="button" id="refreshConfigs" class="ghost" title="Reload list">â†»</button>
+            <button type="button" id="refreshConfigs" class="ghost" title="Reload list">↻</button>
           </div>
         </label>
         <p id="configDesc" class="hint"></p>
@@ -50,7 +50,7 @@
           <label>Port
             <div class="row">
               <select id="port"></select>
-              <button type="button" id="refreshPorts" class="ghost">â†»</button>
+              <button type="button" id="refreshPorts" class="ghost">↻</button>
             </div>
           </label>
           <label>Baud
@@ -106,7 +106,7 @@
         <details class="cmd-manage" open>
           <summary>
             <span>Manage commands.yml</span>
-            <button type="button" id="refreshCommands" class="ghost" title="Reload commands.yml">â†»</button>
+            <button type="button" id="refreshCommands" class="ghost" title="Reload commands.yml">↻</button>
           </summary>
           <div class="cmd-editor">
             <label>ID
@@ -147,7 +147,7 @@
               <input id="cmdImportFile" class="file-hidden" type="file" accept=".yml,.yaml,.csv,text/csv,text/yaml" tabindex="-1" />
               <div class="file-picker">
                 <div id="cmdImportName" class="file-name is-empty" title="">No file selected</div>
-                <button type="button" id="cmdImportBrowse" class="file-browse" title="Choose file">â€¦</button>
+                <button type="button" id="cmdImportBrowse" class="file-browse" title="Choose file">…</button>
               </div>
               <div class="row import-actions">
                 <select id="cmdImportMode" title="Import mode">
@@ -155,15 +155,15 @@
                   <option value="merge">Merge / update</option>
                 </select>
                 <button type="button" id="cmdImportBtn" class="file-load" disabled title="Load selected file">
-                  <span class="file-load-icon" aria-hidden="true">â¬†</span>
+                  <span class="file-load-icon" aria-hidden="true">⬆</span>
                   Load
                 </button>
               </div>
               <a id="cmdDownloadBtn" class="file-download" href="/api/commands/download" download="commands.yml" title="Download current commands.yml">
-                <span class="file-load-icon" aria-hidden="true">â¬‡</span>
+                <span class="file-load-icon" aria-hidden="true">⬇</span>
                 Download commands.yml
               </a>
-              <p class="hint">CSV: id, title, value, encoding - or YAML with <code>commands:</code> list</p>
+              <p class="hint">CSV: id, title, value, encoding — or YAML with <code>commands:</code> list</p>
             </div>
             <div class="row actions">
               <button type="button" id="cmdSaveBtn">Save</button>
@@ -276,6 +276,6 @@
     </section>
   </main>
 
-  <script src="/static/app.js?v=1.0.0"></script>
+  <script src="/static/app.js?v=1.0.3"></script>
 </body>
 </html>
