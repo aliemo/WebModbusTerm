@@ -1,0 +1,6 @@
+id,title,value,encoding,confirm
+read_status,Read Status,01 03 00 00 00 0A,hex,false
+read_jam,Read Jam Flag,01 03 00 0A 00 01,hex,false
+clear_fault,Clear Fault,01 06 00 32 00 00,hex,true
+start_machine,Start,01 05 00 01 FF 00,hex,true
+stop_machine,Stop,01 05 00 01 00 00,hex,true

@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# WebModbusTerm CLI - available system-wide after install
+set -euo pipefail
+
+PREFIX="${WEBMODBUSTERM_HOME:-/opt/webmodbusterm}"
+SERVICE_NAME="webmodbusterm"
+PYTHON="${PREFIX}/.venv/bin/python"
+RUN_PY="${PREFIX}/run.py"
+
+usage() {
+  cat <<EOF
+WebModbusTerm - Modbus Monitor and Management Toolchain
+
+Usage: webmodbusterm <command>
+
+Commands:
+  start      Start systemd service
+  stop       Stop systemd service
+  restart    Restart systemd service
+  status     Show service status
+  logs       Follow service logs
+  run        Run in foreground (dev)
+  open       Print URL
+  version    Show version
+  help       Show this help
+EOF
+}
+
+need_install() {
+  if [[ ! -x "${PYTHON}" || ! -f "${RUN_PY}" ]]; then
+    echo "WebModbusTerm is not installed at ${PREFIX}" >&2
+    echo "Run: sudo bash deploy/install.sh" >&2
+    exit 1
+  fi
+}
+
+cmd="${1:-help}"
+case "${cmd}" in
+  start|stop|restart|status)
+    need_install
+    exec systemctl "${cmd}" "${SERVICE_NAME}"
+    ;;
+  logs)
+    need_install
+    exec journalctl -u "${SERVICE_NAME}" -f
+    ;;
+  run)
+    need_install
+    cd "${PREFIX}"
+    exec "${PYTHON}" "${RUN_PY}"
+    ;;
+  open|url)
+    echo "http://127.0.0.1:8088"
+    if command -v hostname >/dev/null 2>&1; then
+      ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+      if [[ -n "${ip}" ]]; then
+        echo "http://${ip}:8088"
+      fi
+    fi
+    ;;
+  version|-V|--version)
+    if [[ -f "${PREFIX}/VERSION" ]]; then
+      cat "${PREFIX}/VERSION"
+    elif [[ -f "$(cd "$(dirname "$0")/.." && pwd)/VERSION" ]]; then
+      cat "$(cd "$(dirname "$0")/.." && pwd)/VERSION"
+    else
+      echo "1.0.0"
+    fi
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    echo "Unknown command: ${cmd}" >&2
+    usage >&2
+    exit 1
+    ;;
+esac

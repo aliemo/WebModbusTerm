@@ -1,0 +1,18 @@
+[Unit]
+Description=WebModbusTerm - serial / Modbus web terminal
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/webmodbusterm
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/webmodbusterm/.venv/bin/python /opt/webmodbusterm/run.py
+Restart=on-failure
+RestartSec=3
+
+# Allow serial device access if not running as root:
+# SupplementaryGroups=dialout
+
+[Install]
+WantedBy=multi-user.target

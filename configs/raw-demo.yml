@@ -1,0 +1,11 @@
+name: Raw Serial Demo
+description: Fast ASCII/HEX serial defaults
+
+connection:
+  mode: raw
+  port: /dev/ttyUSB0
+  baudrate: 115200
+  bytesize: 8
+  parity: N
+  stopbits: 1
+  unit_id: 1

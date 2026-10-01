@@ -1,0 +1,12 @@
+# Connection profile - load once in Setup
+name: Modbus Device
+description: Default RS485 / serial settings
+
+connection:
+  mode: raw
+  port: /dev/ttyUSB0
+  baudrate: 38400
+  bytesize: 8
+  parity: E
+  stopbits: 1
+  unit_id: 1

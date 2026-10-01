@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebModbusTerm</title>
+  <link rel="icon" href="/static/img/headerLogo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/static/app.css-v=1.0.0" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="brand-link" href="/" title="WebModbusTerm">
+        <img class="brand-logo" src="/static/img/headerLogo.svg" alt="Modbus" width="220" height="74" />
+      </a>
+      <div class="brand-text">
+        <h1>WebModbusTerm</h1>
+        <p>Modbus Monitor and Management Toolchain</p>
+      </div>
+    </div>
+    <div id="connBadge" class="badge off">Disconnected</div>
+  </header>
+
+  <main class="layout">
+    <div class="left-col">
+      <section class="panel setup">
+        <h2>Setup</h2>
+
+        <label>Mode
+          <select id="mode">
+            <option value="raw">Raw serial</option>
+            <option value="modbus_rtu">Modbus RTU</option>
+            <option value="modbus_tcp">Modbus TCP</option>
+          </select>
+        </label>
+
+        <label>Load YAML config
+          <div class="row">
+            <select id="configSelect">
+              <option value="">- select -</option>
+            </select>
+            <button type="button" id="loadConfigBtn">Load</button>
+            <button type="button" id="refreshConfigs" class="ghost" title="Reload list">â†»</button>
+          </div>
+        </label>
+        <p id="configDesc" class="hint"></p>
+
+        <div id="serialFields" class="grid">
+          <label>Port
+            <div class="row">
+              <select id="port"></select>
+              <button type="button" id="refreshPorts" class="ghost">â†»</button>
+            </div>
+          </label>
+          <label>Baud
+            <select id="baudrate">
+              <option>9600</option>
+              <option>19200</option>
+              <option selected>38400</option>
+              <option>57600</option>
+              <option>115200</option>
+            </select>
+          </label>
+          <label>Data bits
+            <select id="bytesize">
+              <option>7</option>
+              <option selected>8</option>
+            </select>
+          </label>
+          <label>Parity
+            <select id="parity">
+              <option value="N">None</option>
+              <option value="E">Even</option>
+              <option value="O">Odd</option>
+            </select>
+          </label>
+          <label>Stop bits
+            <select id="stopbits">
+              <option selected>1</option>
+              <option>2</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="tcpFields" class="grid hidden">
+          <label>Host
+            <input id="host" value="127.0.0.1" />
+          </label>
+          <label>TCP port
+            <input id="tcpPort" type="number" value="502" />
+          </label>
+        </div>
+
+        <label>Unit / Slave ID
+          <input id="unitId" type="number" min="1" max="247" value="1" />
+        </label>
+
+        <div class="row actions">
+          <button id="connectBtn" type="button">Connect</button>
+          <button id="disconnectBtn" type="button" class="ghost" disabled>Disconnect</button>
+        </div>
+      </section>
+
+      <section class="panel commands-panel">
+        <details class="cmd-manage" open>
+          <summary>
+            <span>Manage commands.yml</span>
+            <button type="button" id="refreshCommands" class="ghost" title="Reload commands.yml">â†»</button>
+          </summary>
+          <div class="cmd-editor">
+            <label>ID
+              <input id="cmdId" placeholder="read_status" autocomplete="off" />
+            </label>
+            <label>Title
+              <input id="cmdTitle" placeholder="Read Status" autocomplete="off" />
+            </label>
+            <label>Value to send
+              <input id="cmdValue" placeholder="01 03 00 00 00 0A" autocomplete="off" spellcheck="false" />
+            </label>
+            <div class="grid">
+              <label>Encoding
+                <select id="cmdEncoding">
+                  <option value="hex">HEX</option>
+                  <option value="ascii">ASCII</option>
+                </select>
+              </label>
+              <label>Line ending
+                <select id="cmdLineEnding">
+                  <option value="none">None</option>
+                  <option value="lf">LF</option>
+                  <option value="cr">CR</option>
+                  <option value="crlf">CRLF</option>
+                </select>
+              </label>
+            </div>
+            <label class="inline"><input type="checkbox" id="cmdConfirm" /> Confirm before send</label>
+            <div class="import-box">
+              <span class="import-label">Import YAML / CSV</span>
+              <input id="cmdImportFile" class="file-hidden" type="file" accept=".yml,.yaml,.csv,text/csv,text/yaml" tabindex="-1" />
+              <div class="file-picker">
+                <div id="cmdImportName" class="file-name is-empty" title="">No file selected</div>
+                <button type="button" id="cmdImportBrowse" class="file-browse" title="Choose file">â€¦</button>
+              </div>
+              <div class="row import-actions">
+                <select id="cmdImportMode" title="Import mode">
+                  <option value="replace" selected>Replace all</option>
+                  <option value="merge">Merge / update</option>
+                </select>
+                <button type="button" id="cmdImportBtn" class="file-load" disabled title="Load selected file">
+                  <span class="file-load-icon" aria-hidden="true">â¬†</span>
+                  Load
+                </button>
+              </div>
+              <a id="cmdDownloadBtn" class="file-download" href="/api/commands/download" download="commands.yml" title="Download current commands.yml">
+                <span class="file-load-icon" aria-hidden="true">â¬‡</span>
+                Download commands.yml
+              </a>
+              <p class="hint">CSV: id, title, value, encoding - or YAML with <code>commands:</code> list</p>
+            </div>
+            <div class="row actions">
+              <button type="button" id="cmdSaveBtn">Save</button>
+              <button type="button" id="cmdNewBtn" class="ghost">New</button>
+              <button type="button" id="cmdDeleteBtn" class="ghost">Delete</button>
+            </div>
+          </div>
+        </details>
+      </section>
+    </div>
+
+    <section class="panel terminal">
+      <div class="term-toolbar">
+        <h2>Traffic</h2>
+        <div class="row toolbar-controls">
+          <label class="inline"><input type="checkbox" id="autoscroll" checked /> Autoscroll</label>
+          <label class="inline buffer-label">Buffer
+            <select id="logBuffer">
+              <option value="100">100</option>
+              <option value="200" selected>200</option>
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+              <option value="2000">2000</option>
+              <option value="5000">5000</option>
+            </select>
+          </label>
+          <button type="button" id="clearLog" class="ghost">Clear</button>
+        </div>
+      </div>
+      <div class="log-wrap">
+        <div class="log-head">
+          <span class="c-time">Time</span>
+          <span class="c-action">Action</span>
+          <span class="c-hex">HEX</span>
+          <span class="c-ascii">ASCII</span>
+        </div>
+        <pre id="log" class="log" aria-live="polite"></pre>
+      </div>
+
+      <div class="send-box crc-global">
+        <div class="row tools-row">
+          <select id="encoding" title="Encoding">
+            <option value="hex">HEX</option>
+            <option value="ascii">ASCII</option>
+          </select>
+          <select id="lineEnding" title="Line ending">
+            <option value="none">No ending</option>
+            <option value="lf">LF</option>
+            <option value="cr">CR</option>
+            <option value="crlf">CRLF</option>
+          </select>
+          <select id="appendCrc" title="CRC / check bytes">
+            <option value="modbus" selected>MODBUS</option>
+            <option value="none">N/A (disabled)</option>
+            <option value="0x0000">0x0000</option>
+            <option value="0x00">0x00</option>
+            <option value="0xffff">0xFFFF</option>
+            <option value="0xff">0xFF</option>
+            <option value="sum8">SUM8</option>
+            <option value="xor8">XOR8</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="send-box">
+        <h3>Raw command</h3>
+        <div class="row">
+          <input id="payload" placeholder="01 03 00 00 00 0A" autocomplete="off" spellcheck="false" />
+          <button type="button" id="sendBtn" class="action-eq" disabled>Send</button>
+        </div>
+        <p id="crcPreview" class="hint mono-hint"></p>
+      </div>
+
+      <div class="send-box">
+        <h3>Predefined command <span class="hint-inline">(commands.yml)</span></h3>
+        <div class="row">
+          <select id="predefinedSelect"></select>
+          <button type="button" id="runPredefinedBtn">Send</button>
+        </div>
+        <p id="predefinedPreview" class="hint mono-hint"></p>
+      </div>
+
+      <div id="modbusSend" class="send-box hidden">
+        <h3>Modbus request</h3>
+        <div class="grid">
+          <label>Function
+            <select id="mbFunction">
+              <option value="03">03 Read Holding Registers</option>
+              <option value="04">04 Read Input Registers</option>
+              <option value="01">01 Read Coils</option>
+              <option value="02">02 Read Discrete Inputs</option>
+              <option value="06">06 Write Single Register</option>
+              <option value="05">05 Write Single Coil</option>
+              <option value="16">16 Write Multiple Registers</option>
+              <option value="15">15 Write Multiple Coils</option>
+            </select>
+          </label>
+          <label>Address
+            <input id="mbAddress" type="number" min="0" value="0" />
+          </label>
+          <label>Quantity
+            <input id="mbQuantity" type="number" min="1" value="1" />
+          </label>
+          <label>Values (comma-separated)
+            <input id="mbValues" placeholder="e.g. 100,200 or 1,0,1" />
+          </label>
+        </div>
+        <button type="button" id="mbSendBtn">Execute</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js-v=1.0.0"></script>
+</body>
+</html>

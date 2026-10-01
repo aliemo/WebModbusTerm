@@ -1,0 +1,26 @@
+# NOTICE
+
+## Application code
+
+WebModbusTerm application source (Python, HTML, CSS, JS, deploy scripts)
+is licensed under the MIT License. See `LICENSE`.
+
+## Fonts
+
+Bundled fonts under `static/fonts/` are **IBM Plex Sans** and **IBM Plex Mono**,
+licensed under the SIL Open Font License 1.1.
+Source: https://github.com/IBM/plex
+
+## Logo
+
+`static/img/headerLogo.svg` is derived from
+[File:Logo of Modbus.svg](https://commons.wikimedia.org/wiki/File:Logo_of_Modbus.svg)
+on Wikimedia Commons.
+
+- Copyright status on Commons: public domain as a simple text/geometric logo
+  (PD-textlogo / below threshold of originality).
+- **Trademark:** “Modbus” may be a trademark. Use of the mark does not imply
+  endorsement by Modbus Organization / associated rights holders. Do not use
+  this logo in ways that suggest official affiliation without permission.
+
+The logo was recolored for dark UI use in WebModbusTerm.

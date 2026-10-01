@@ -1,0 +1,24 @@
+commands:
+- id: read_status
+  title: Read Status
+  value: 01 03 00 00 00 0A
+  append_crc: true
+- id: read_jam
+  title: Read Jam Flag
+  value: 01 03 00 0A 00 01
+  append_crc: true
+- id: clear_fault
+  title: Clear Fault
+  value: 01 06 00 32 00 00
+  confirm: true
+  append_crc: true
+- id: start_machine
+  title: Start
+  value: 01 05 00 01 FF 00
+  confirm: true
+  append_crc: true
+- id: stop_machine
+  title: Stop
+  value: 01 05 00 01 00 00
+  confirm: true
+  append_crc: true
