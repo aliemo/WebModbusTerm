@@ -22,3 +22,10 @@ Thumbs.db
 
 # Local demo GIF build artifacts
 docs/_gif_frames/
+
+# Python packaging
+dist/
+build/
+*.egg-info/
+packaging/root/
+.venv-build/

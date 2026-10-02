@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
-"""Run WebModbusTerm:  python run.py"""
+"""Run WebModbusTerm:  python run.py  (same as ``webmodbusterm`` / ``python -m webmodbusterm``)."""
 
-import uvicorn
+from webmodbusterm.__main__ import main
 
 if __name__ == "__main__":
-    uvicorn.run(
-        "app.main:app",
-        host="0.0.0.0",
-        port=8088,
-        reload=False,
-    )
+    main()

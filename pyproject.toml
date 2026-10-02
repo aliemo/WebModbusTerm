@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "webmodbusterm"
+version = "2.0.0"
+description = "Modbus Monitor and Management Toolchain - GTKTerm-style serial + Modbus web terminal"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "WebModbusTerm contributors" }]
+keywords = ["modbus", "serial", "rtu", "tcp", "fastapi", "terminal"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Web Environment",
+  "Framework :: FastAPI",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Topic :: System :: Hardware",
+  "Topic :: Terminals",
+]
+dependencies = [
+  "fastapi==0.115.6",
+  "uvicorn[standard]==0.34.0",
+  "pyserial==3.5",
+  "pymodbus==3.8.3",
+  "jinja2==3.1.5",
+  "python-multipart==0.0.20",
+  "PyYAML==6.0.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/aliemo/WebModbusTerm"
+Repository = "https://github.com/aliemo/WebModbusTerm"
+Issues = "https://github.com/aliemo/WebModbusTerm/issues"
+Changelog = "https://github.com/aliemo/WebModbusTerm/blob/main/CHANGELOG.md"
+
+[project.scripts]
+webmodbusterm = "webmodbusterm.__main__:main"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "webmodbusterm",
+  "deploy",
+  "packaging",
+  "docs/webmodbusterm-demo.gif",
+  "run.py",
+  "VERSION",
+  "LICENSE",
+  "NOTICE",
+  "README.md",
+  "CHANGELOG.md",
+  "requirements.txt",
+  "Dockerfile",
+  "docker-compose.yml",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["webmodbusterm"]
