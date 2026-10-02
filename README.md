@@ -55,6 +55,8 @@ Then open http://127.0.0.1:8088
 
 `nfpm` staging lives inside `build.sh` (no separate `stage.sh`).
 
+GitHub Actions (`.github/workflows/build.yml`) runs the same targets on push/PR: pip wheel+sdist, Docker image, and deb/rpm (artifacts uploaded; no publish).
+
 ## Install options
 
 ### pip

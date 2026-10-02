@@ -1,0 +1,95 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pip:
+    name: pip (wheel + sdist)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build pip artifacts
+        run: bash packaging/build.sh pip
+
+      - name: Smoke-test wheel
+        run: |
+          python -m venv .venv-ci
+          .venv-ci/bin/pip install --upgrade pip
+          .venv-ci/bin/pip install dist/webmodbusterm-*-py3-none-any.whl
+          .venv-ci/bin/python -c "import webmodbusterm; print(webmodbusterm.__version__)"
+          .venv-ci/bin/webmodbusterm --help
+
+      - name: Upload pip artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-dist
+          path: |
+            dist/webmodbusterm-*-py3-none-any.whl
+            dist/webmodbusterm-*.tar.gz
+          if-no-files-found: error
+
+  docker:
+    name: docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: bash packaging/build.sh docker
+
+      - name: Smoke-test image
+        run: |
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          docker run --rm --entrypoint webmodbusterm "webmodbusterm:${VERSION}" --help
+
+  nfpm:
+    name: deb + rpm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends rsync python3-venv python3-pip
+
+      - name: Install nfpm
+        env:
+          NFPM_VERSION: "2.41.3"
+        run: |
+          curl -sSfL \
+            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin nfpm
+          nfpm --version
+
+      - name: Build packages
+        run: bash packaging/build.sh nfpm
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-packages
+          path: |
+            dist/webmodbusterm_*.deb
+            dist/webmodbusterm-*.rpm
+          if-no-files-found: error
