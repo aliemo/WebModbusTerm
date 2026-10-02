@@ -55,7 +55,17 @@ Then open http://127.0.0.1:8088
 
 `nfpm` staging lives inside `build.sh` (no separate `stage.sh`).
 
-GitHub Actions (`.github/workflows/build.yml`) runs the same targets on push/PR: pip wheel+sdist, Docker image, and deb/rpm (artifacts uploaded; no publish).
+GitHub Actions:
+
+- **CI** (`.github/workflows/build.yml`) — on push/PR: build + smoke-test pip/Docker/nfpm (no publish).
+- **Release** (`.github/workflows/release.yml`) — on `v*` tags only: GitHub Release (wheel, `.deb`, `.rpm` + changelog) and push image to GHCR. No PyPI / apt repo.
+
+```bash
+# after bumping VERSION + CHANGELOG
+git tag v2.0.0
+git push origin v2.0.0
+# docker pull ghcr.io/<owner>/webmodbusterm:2.0.0
+```
 
 ## Install options
 
@@ -74,6 +84,7 @@ webmodbusterm --port 8090
 docker run --rm -p 8088:8088 webmodbusterm
 # docker run --rm -p 8088:8088 --device=/dev/ttyUSB0 --group-add dialout webmodbusterm
 docker compose up --build
+# released images: docker pull ghcr.io/<owner>/webmodbusterm:<version>
 ```
 
 ### Debian / RPM

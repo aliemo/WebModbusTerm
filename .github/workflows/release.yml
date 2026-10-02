@@ -1,0 +1,154 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    name: GitHub Release + GHCR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: ver
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          FILE_VERSION="$(tr -d '[:space:]' < VERSION)"
+          if [[ "${VERSION}" != "${FILE_VERSION}" ]]; then
+            echo "::error::tag ${TAG} does not match VERSION file (${FILE_VERSION})"
+            exit 1
+          fi
+          OWNER_LC="$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+          IMAGE="ghcr.io/${OWNER_LC}/webmodbusterm"
+          {
+            echo "tag=${TAG}"
+            echo "version=${VERSION}"
+            echo "image=${IMAGE}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install nfpm deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends rsync python3-venv python3-pip
+
+      - name: Install nfpm
+        env:
+          NFPM_VERSION: "2.41.3"
+        run: |
+          curl -sSfL \
+            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin nfpm
+          nfpm --version
+
+      - name: Build wheel + deb + rpm
+        run: |
+          bash packaging/build.sh pip
+          bash packaging/build.sh nfpm
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.ver.outputs.image }}:${{ steps.ver.outputs.version }}
+            ${{ steps.ver.outputs.image }}:latest
+          labels: |
+            org.opencontainers.image.title=WebModbusTerm
+            org.opencontainers.image.description=Modbus Monitor and Management Toolchain
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.version=${{ steps.ver.outputs.version }}
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Compose release notes
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+          IMAGE: ${{ steps.ver.outputs.image }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## WebModbusTerm ${VERSION}"
+            echo
+            if [[ -f CHANGELOG.md ]]; then
+              awk -v ver="${VERSION}" '
+                $0 ~ ("^## \\[" ver "\\]") { p=1; print; next }
+                p && /^## / { exit }
+                p { print }
+              ' CHANGELOG.md
+              echo
+            fi
+            echo "## Install"
+            echo
+            echo "### Docker (GHCR)"
+            echo
+            echo '```bash'
+            echo "docker pull ${IMAGE}:${VERSION}"
+            echo "docker run --rm -p 8088:8088 ${IMAGE}:${VERSION}"
+            echo '```'
+            echo
+            echo "### Python wheel"
+            echo
+            echo '```bash'
+            echo "pip install ./webmodbusterm-${VERSION}-py3-none-any.whl"
+            echo "webmodbusterm"
+            echo '```'
+            echo
+            echo "### Debian / RPM"
+            echo
+            echo '```bash'
+            echo "sudo dpkg -i webmodbusterm_${VERSION}_amd64.deb"
+            echo "# or: sudo rpm -i webmodbusterm-${VERSION}-1.x86_64.rpm"
+            echo '```'
+            echo
+            echo "_No PyPI / apt / yum repo for this release._"
+          } > release-notes.md
+          cat release-notes.md
+
+      - name: Collect release assets
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          cp dist/webmodbusterm-*-py3-none-any.whl release-assets/
+          cp dist/webmodbusterm_*.deb release-assets/
+          cp dist/webmodbusterm-*.rpm release-assets/
+          ls -lh release-assets/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: WebModbusTerm ${{ steps.ver.outputs.version }}
+          body_path: release-notes.md
+          files: release-assets/*
+          fail_on_unmatched_files: true
+          generate_release_notes: false
