@@ -1,0 +1,21 @@
+services:
+  webmodbusterm:
+    build: .
+    image: webmodbusterm:2.0.0
+    container_name: webmodbusterm
+    ports:
+      - "8088:8088"
+    environment:
+      WEBMODBUSTERM_HOST: "0.0.0.0"
+      WEBMODBUSTERM_PORT: "8088"
+      # Persist YAML outside the image package tree
+      WEBMODBUSTERM_CONFIG_DIR: /data/configs
+    volumes:
+      - ./webmodbusterm/configs:/data/configs
+    # Uncomment and adjust for host serial ports:
+    # devices:
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
+    #   - /dev/ttyACM0:/dev/ttyACM0
+    # group_add:
+    #   - dialout
+    restart: unless-stopped
