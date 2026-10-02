@@ -7,13 +7,13 @@ is licensed under the MIT License. See `LICENSE`.
 
 ## Fonts
 
-Bundled fonts under `static/fonts/` are **IBM Plex Sans** and **IBM Plex Mono**,
+Bundled fonts under `webmodbusterm/static/fonts/` are **IBM Plex Sans** and **IBM Plex Mono**,
 licensed under the SIL Open Font License 1.1.
 Source: https://github.com/IBM/plex
 
 ## Logo
 
-`static/img/headerLogo.svg` is derived from
+`webmodbusterm/static/img/headerLogo.svg` is derived from
 [File:Logo of Modbus.svg](https://commons.wikimedia.org/wiki/File:Logo_of_Modbus.svg)
 on Wikimedia Commons.
 

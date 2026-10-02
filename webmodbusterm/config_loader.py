@@ -2,14 +2,24 @@
 
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-ROOT = Path(__file__).resolve().parent.parent
-CONFIG_DIR = ROOT / "configs"
+PACKAGE_ROOT = Path(__file__).resolve().parent
+
+
+def _resolve_config_dir() -> Path:
+    override = os.environ.get("WEBMODBUSTERM_CONFIG_DIR", "").strip()
+    if override:
+        return Path(override)
+    return PACKAGE_ROOT / "configs"
+
+
+CONFIG_DIR = _resolve_config_dir()
 COMMANDS_FILE = CONFIG_DIR / "commands.yml"
 
 

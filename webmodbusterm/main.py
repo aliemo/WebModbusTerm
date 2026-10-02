@@ -13,7 +13,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 
-from app.config_loader import (
+from webmodbusterm import __version__
+from webmodbusterm.config_loader import (
     COMMANDS_FILE,
     create_config,
     delete_command,
@@ -26,7 +27,7 @@ from app.config_loader import (
     save_commands,
     upsert_command,
 )
-from app.serial_bridge import (
+from webmodbusterm.serial_bridge import (
     SerialBridge,
     bytes_to_hex,
     compute_crc_tail,
@@ -35,11 +36,11 @@ from app.serial_bridge import (
     parse_hex_payload,
 )
 
-ROOT = Path(__file__).resolve().parent.parent
-templates = Jinja2Templates(directory=str(ROOT / "templates"))
+PACKAGE_ROOT = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=str(PACKAGE_ROOT / "templates"))
 
-app = FastAPI(title="WebModbusTerm", version="1.0.0")
-app.mount("/static", StaticFiles(directory=str(ROOT / "static")), name="static")
+app = FastAPI(title="WebModbusTerm", version=__version__)
+app.mount("/static", StaticFiles(directory=str(PACKAGE_ROOT / "static")), name="static")
 
 
 @app.middleware("http")
