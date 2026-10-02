@@ -1,0 +1,38 @@
+# Built by: ./packaging/build.sh nfpm
+# Staging tree is created automatically under packaging/root/ (no separate stage.sh).
+
+name: webmodbusterm
+arch: amd64
+platform: linux
+version: ${VERSION}
+section: net
+priority: optional
+maintainer: WebModbusTerm contributors <noreply@users.noreply.github.com>
+description: |
+  Modbus Monitor and Management Toolchain - GTKTerm-style serial + Modbus web terminal.
+vendor: WebModbusTerm
+homepage: https://github.com/aliemo/WebModbusTerm
+license: MIT
+contents:
+  - src: packaging/root/opt/webmodbusterm
+    dst: /opt/webmodbusterm
+    type: tree
+  - src: packaging/root/usr/local/bin/webmodbusterm
+    dst: /usr/local/bin/webmodbusterm
+    file_info:
+      mode: 0755
+  - src: deploy/webmodbusterm.service
+    dst: /etc/systemd/system/webmodbusterm.service
+    type: config
+    file_info:
+      mode: 0644
+scripts:
+  postinstall: packaging/scripts/postinstall.sh
+  preremove: packaging/scripts/preremove.sh
+overrides:
+  deb:
+    depends:
+      - python3
+  rpm:
+    depends:
+      - python3
