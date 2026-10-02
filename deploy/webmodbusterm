@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# WebModbusTerm CLI - available system-wide after install
+# Host CLI after deploy/install.sh or deb/rpm (service control).
 set -euo pipefail
 
 PREFIX="${WEBMODBUSTERM_HOME:-/opt/webmodbusterm}"
 SERVICE_NAME="webmodbusterm"
-PYTHON="${PREFIX}/.venv/bin/python"
-RUN_PY="${PREFIX}/run.py"
+VENV_PY="${PREFIX}/.venv/bin/python"
+VENV_APP="${PREFIX}/.venv/bin/webmodbusterm"
 
 usage() {
   cat <<EOF
@@ -19,7 +19,7 @@ Commands:
   restart    Restart systemd service
   status     Show service status
   logs       Follow service logs
-  run        Run in foreground (dev)
+  run        Run in foreground
   open       Print URL
   version    Show version
   help       Show this help
@@ -27,7 +27,7 @@ EOF
 }
 
 need_install() {
-  if [[ ! -x "${PYTHON}" || ! -f "${RUN_PY}" ]]; then
+  if [[ ! -x "${VENV_PY}" || ! -x "${VENV_APP}" ]]; then
     echo "WebModbusTerm is not installed at ${PREFIX}" >&2
     echo "Run: sudo bash deploy/install.sh" >&2
     exit 1
@@ -47,7 +47,7 @@ case "${cmd}" in
   run)
     need_install
     cd "${PREFIX}"
-    exec "${PYTHON}" "${RUN_PY}"
+    exec "${VENV_APP}"
     ;;
   open|url)
     echo "http://127.0.0.1:8088"
@@ -60,11 +60,13 @@ case "${cmd}" in
     ;;
   version|-V|--version)
     if [[ -f "${PREFIX}/VERSION" ]]; then
-      cat "${PREFIX}/VERSION"
+      tr -d '[:space:]' < "${PREFIX}/VERSION"
+      echo
     elif [[ -f "$(cd "$(dirname "$0")/.." && pwd)/VERSION" ]]; then
-      cat "$(cd "$(dirname "$0")/.." && pwd)/VERSION"
+      tr -d '[:space:]' < "$(cd "$(dirname "$0")/.." && pwd)/VERSION"
+      echo
     else
-      echo "1.0.0"
+      echo "2.0.0"
     fi
     ;;
   help|-h|--help)

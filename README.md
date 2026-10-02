@@ -11,7 +11,7 @@ _Full-page UI tour: Raw serial → Modbus RTU → Modbus TCP._
 ## Features
 
 - Mode dropdown: Raw serial / Modbus RTU / Modbus TCP
-- Load connection YAML (`configs/*.yml`)
+- Load connection YAML (`webmodbusterm/configs/*.yml`)
 - Raw + predefined commands with shared HEX / ending / CRC tools
 - CRC modes: MODBUS, N/A, 0x0000, 0x00, 0xFFFF, 0xFF, SUM8, XOR8
 - Manage `commands.yml` (CRUD, YAML/CSV import, download)
@@ -25,15 +25,77 @@ _Full-page UI tour: Raw serial → Modbus RTU → Modbus TCP._
 python -m venv .venv
 # Windows: .venv\Scripts\activate
 # Linux:   source .venv/bin/activate
-pip install -r requirements.txt
-python run.py
+pip install -e .
+webmodbusterm
+# or: python run.py / python -m webmodbusterm
 ```
 
 Then open http://127.0.0.1:8088
 
+## Layout
+
+| Path | Role |
+|------|------|
+| `webmodbusterm/` | Product package (Python, UI, default configs) |
+| `deploy/` | systemd unit + portable host install / service CLI |
+| `packaging/` | Local `build.sh` / `clean.sh` + nfpm config |
+| `docs/` | Demo GIF |
+
+## Local builds
+
+```bash
+./packaging/build.sh          # pip + docker
+./packaging/build.sh pip      # dist/*.whl + sdist
+./packaging/build.sh docker   # webmodbusterm:<version>
+./packaging/build.sh nfpm     # dist/*.deb + *.rpm
+./packaging/build.sh all
+./packaging/clean.sh          # remove dist/, packaging/root/, .venv-build
+./packaging/clean.sh docker   # also remove local images
+```
+
+`nfpm` staging lives inside `build.sh` (no separate `stage.sh`).
+
+## Install options
+
+### pip
+
+```bash
+pip install .
+# pip install dist/webmodbusterm-*.whl
+webmodbusterm --port 8090
+```
+
+### Docker
+
+```bash
+./packaging/build.sh docker
+docker run --rm -p 8088:8088 webmodbusterm
+# docker run --rm -p 8088:8088 --device=/dev/ttyUSB0 --group-add dialout webmodbusterm
+docker compose up --build
+```
+
+### Debian / RPM
+
+```bash
+./packaging/build.sh nfpm
+sudo dpkg -i dist/webmodbusterm_*.deb
+# or: sudo rpm -i dist/webmodbusterm-*.rpm
+```
+
+### Linux service (venv + systemd)
+
+```bash
+sudo bash deploy/install.sh
+webmodbusterm status
+webmodbusterm logs
+webmodbusterm open
+```
+
+> Binds `0.0.0.0:8088` with no built-in auth — for LAN / VPN / lab use behind your own access control.
+
 ## YAML
 
-**Connection** - `configs/modbus-rtu-demo.yml`:
+**Connection** (`webmodbusterm/configs/modbus-rtu-demo.yml`):
 
 ```yaml
 name: Modbus Device
@@ -44,7 +106,7 @@ connection:
   parity: E
 ```
 
-**Commands** - `configs/commands.yml`:
+**Commands** (`webmodbusterm/configs/commands.yml`):
 
 ```yaml
 commands:
@@ -54,33 +116,8 @@ commands:
     encoding: hex
 ```
 
-## Install (Linux service)
-
-Portable install - **venv + systemd** only (no apt/pacman for app deps).
-Installs to `/opt/webmodbusterm` and adds a global `webmodbusterm` command.
-
-```bash
-sudo bash deploy/install.sh
-# optional custom path:
-# sudo PREFIX=/opt/webmodbusterm bash deploy/install.sh
-```
-
-CLI:
-
-```bash
-webmodbusterm help
-webmodbusterm status
-webmodbusterm logs
-webmodbusterm start
-webmodbusterm stop
-webmodbusterm restart
-webmodbusterm run
-webmodbusterm open
-```
-
 ## Notes
 
-- Version: **1.0.0** (see `VERSION` and `CHANGELOG.md`)
+- Version: **2.0.0** (`VERSION`, `CHANGELOG.md`)
 - HEX mode accepts only `0-9 A-F` and spaces
-- Binds `0.0.0.0:8088` (LAN / VPN friendly)
-- Modbus logo is derived from Wikimedia Commons; trademark rules still apply (see `NOTICE`)
+- Modbus logo attribution / trademark notes: see `NOTICE`

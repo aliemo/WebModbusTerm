@@ -41,7 +41,7 @@ if command -v rsync >/dev/null 2>&1; then
     "${ROOT}/" "${PREFIX}/"
 else
   mkdir -p "${PREFIX}"
-  for item in app configs deploy static templates requirements.txt run.py VERSION README.md CHANGELOG.md LICENSE NOTICE; do
+  for item in webmodbusterm deploy requirements.txt run.py VERSION README.md CHANGELOG.md LICENSE NOTICE pyproject.toml; do
     if [[ -e "${ROOT}/${item}" ]]; then
       rm -rf "${PREFIX}/${item}"
       cp -a "${ROOT}/${item}" "${PREFIX}/${item}"
@@ -52,7 +52,11 @@ fi
 cd "${PREFIX}"
 python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
-.venv/bin/pip install -r requirements.txt
+if [[ -f pyproject.toml ]]; then
+  .venv/bin/pip install .
+else
+  .venv/bin/pip install -r requirements.txt
+fi
 
 # Global CLI (works with custom PREFIX)
 cat > "${BIN_DST}" <<EOF

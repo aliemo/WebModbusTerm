@@ -7,7 +7,7 @@ Type=simple
 User=root
 WorkingDirectory=/opt/webmodbusterm
 Environment=PYTHONUNBUFFERED=1
-ExecStart=/opt/webmodbusterm/.venv/bin/python /opt/webmodbusterm/run.py
+ExecStart=/opt/webmodbusterm/.venv/bin/webmodbusterm
 Restart=on-failure
 RestartSec=3
 
