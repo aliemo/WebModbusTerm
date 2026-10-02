@@ -8,8 +8,6 @@ Open: `http://<host>:8088`
 
 _Full-page UI tour: Raw serial → Modbus RTU → Modbus TCP._
 
-License: [MIT](LICENSE) - see [NOTICE](NOTICE) for fonts and logo attribution.
-
 ## Features
 
 - Mode dropdown: Raw serial / Modbus RTU / Modbus TCP

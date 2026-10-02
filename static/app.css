@@ -143,10 +143,11 @@ body {
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(280px, 340px) 1fr;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
   gap: 1rem;
   padding: 1rem 1.5rem 1.5rem;
-  align-items: start;
+  align-items: stretch;
+  min-height: calc(100vh - 4.5rem);
 }
 
 .left-col {
@@ -346,7 +347,8 @@ button.ghost {
 .terminal {
   display: flex;
   flex-direction: column;
-  min-height: 70vh;
+  min-height: 0;
+  height: 100%;
 }
 
 .term-toolbar {
@@ -374,21 +376,24 @@ button.ghost {
 .log-wrap {
   display: flex;
   flex-direction: column;
-  min-height: 320px;
-  max-height: 55vh;
+  flex: 1 1 auto;
+  min-height: 280px;
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: auto;
   background: #0b1018;
 }
 
 .log-head,
 .log > div {
   display: grid;
-  grid-template-columns: 7.2rem minmax(7rem, 11rem) minmax(10rem, 1.4fr) minmax(6rem, 0.9fr);
+  grid-template-columns: 7rem minmax(6.5rem, 10rem) minmax(0, 1.35fr) minmax(7rem, 1fr);
   gap: 0.55rem;
   align-items: start;
   padding: 0.35rem 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .log-head {
@@ -424,8 +429,9 @@ button.ghost {
 
 .c-time { color: var(--muted); }
 .c-action { font-weight: 650; }
-.c-hex { font-family: var(--mono); }
-.c-ascii { color: var(--muted); font-family: var(--mono); }
+.c-hex { font-family: var(--mono); color: var(--ink); }
+.c-ascii { color: #c5d6e8; font-family: var(--mono); }
+.log-head .c-ascii { color: #9ec8e8; }
 
 .log .rx { color: inherit; }
 .log .rx .c-action { color: var(--rx); }
@@ -436,16 +442,21 @@ button.ghost {
 .log .err .c-ascii { color: var(--err); }
 .log .mb .c-action { color: #9ec8e8; }
 
-@media (max-width: 900px) {
-  .log-wrap { max-height: 45vh; }
+@media (max-width: 1400px) {
   .log-head,
   .log > div {
-    grid-template-columns: 5.5rem 1fr;
+    grid-template-columns: 6.2rem minmax(6rem, 1fr);
   }
   .c-hex,
   .c-ascii {
     grid-column: 1 / -1;
   }
+  .c-hex { margin-top: 0.1rem; }
+  .c-ascii { margin-top: 0.05rem; opacity: 0.95; }
+}
+
+@media (max-width: 900px) {
+  .log-wrap { max-height: 42vh; flex: 0 1 auto; }
 }
 
 .send-box {
